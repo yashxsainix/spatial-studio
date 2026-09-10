@@ -1,5 +1,18 @@
 # Security posture
 
-This build is localhost-first and does not send API keys to the browser. `.env` is gitignored. Static responses add basic browser security headers.
+Spatial Studio V0.5 is localhost-first.
 
-Do not expose this server publicly yet. Public production deployment still needs identity/authentication, per-project authorization, CSRF protection where applicable, rate limiting, a managed database, encrypted blob storage, secret management, observability, backups, retention policies, and privacy/consent controls for real client media.
+Current protections:
+
+- `.env` and `data/` are gitignored
+- provider/API secrets stay server-side
+- uploads and JSON bodies have size limits
+- filenames are normalized before local storage
+- reconstruction ZIP extraction validates offsets, sizes and supported formats
+- spatial scene state validates numeric coordinates and limits portal count
+- portal URLs are restricted to local paths or HTTP(S)
+- static responses use basic security headers
+
+Do **not** expose this localhost server directly to the public internet.
+
+A public product still needs identity/authentication, per-project authorization, CSRF protections where applicable, rate limiting, managed database/blob storage, secret management, encryption strategy, observability, backups, retention/deletion controls, consent/privacy workflows for captured people, and deployment-specific content security policy.
