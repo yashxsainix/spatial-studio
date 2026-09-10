@@ -1,0 +1,16 @@
+{
+  "name": "spatial-ai-studio",
+  "version": "0.3.2",
+  "private": true,
+  "description": "Local-first spatial production studio with Astra direction and KIRI 3DGS reconstruction.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test --test-concurrency=1 test/*.test.js",
+    "doctor:kiri": "node src/kiri-doctor.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

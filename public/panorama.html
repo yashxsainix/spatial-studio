@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>360 Moment</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}canvas{display:block;width:100%;height:100%;touch-action:none}.hud{position:absolute;inset:0;pointer-events:none;padding:18px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(180deg,rgba(0,0,0,.42),transparent 22%,transparent 72%,rgba(0,0,0,.42))}.title{font-size:13px;font-weight:650;letter-spacing:.01em}.hint{font-size:11px;opacity:.7}.controls{pointer-events:auto;display:flex;gap:8px}.controls button{border:1px solid rgba(255,255,255,.25);background:rgba(12,12,12,.58);backdrop-filter:blur(8px);color:#fff;border-radius:999px;padding:9px 12px;font:inherit;font-size:11px;cursor:pointer}.center{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}.play{pointer-events:auto;border:1px solid rgba(255,255,255,.35);background:rgba(15,15,15,.6);color:#fff;width:58px;height:58px;border-radius:50%;font-size:19px;cursor:pointer;backdrop-filter:blur(10px)}.error{max-width:440px;padding:18px;background:rgba(0,0,0,.7);border-radius:14px;font-size:13px;line-height:1.5}.hidden{display:none!important}
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <video id="video" playsinline loop class="hidden"></video>
+  <img id="image" alt="" class="hidden" />
+  <div class="hud"><div><div class="title" id="title">360 moment</div><div class="hint">Drag to look · scroll to zoom</div></div><div class="controls"><button id="reset" type="button">Reset view</button><button id="mute" type="button">Sound on</button></div></div>
+  <div class="center"><button id="play" class="play hidden" type="button" aria-label="Play 360 video">▶</button><div id="error" class="error hidden"></div></div>
+  <script src="/panorama.js"></script>
+</body>
+</html>
