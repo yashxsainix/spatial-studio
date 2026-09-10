@@ -1,13 +1,13 @@
 {
   "name": "spatial-ai-studio",
-  "version": "0.3.2",
+  "version": "0.6.0",
   "private": true,
-  "description": "Local-first spatial production studio with Astra direction and KIRI 3DGS reconstruction.",
+  "description": "Spatial experience production studio with Astra direction, KIRI reconstruction, walkable Scene Lab navigation, physics collision guides and launch previews.",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "test": "node --test --test-concurrency=1 test/*.test.js",
+    "test": "node --test --test-concurrency=1 test/*.test.js test/*.test.mjs",
     "doctor:kiri": "node src/kiri-doctor.js"
   },
   "engines": {
