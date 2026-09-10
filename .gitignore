@@ -1,7 +1,12 @@
 .env
 node_modules/
-data/projects/
-data/artifacts/
-data/projects.json
+data/
 .DS_Store
 *.log
+*.ply
+*.splat
+*.sog
+*.spz
+*.mov
+*.mp4
+*.zip
