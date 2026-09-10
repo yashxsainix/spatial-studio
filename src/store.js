@@ -24,6 +24,10 @@ function normalizeProject(project) {
       provider: 'kiri', status: 'not_started', sourceMedia: '', serialize: '', rawStatus: null,
       submittedAt: null, updatedAt: null, modelUrl: null, localArtifact: null, viewerUrl: '',
       attemptId: '', providerDiagnostic: null, ...(project.reconstruction || {})
+    },
+    scene: {
+      status: 'not_prepared', preparedAt: null, sourceArtifact: '', splat: null, cameras: null,
+      cameraWarning: null, error: null, ...(project.scene || {})
     }
   };
 }
