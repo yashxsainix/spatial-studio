@@ -24,6 +24,7 @@ module.exports = {
   DATA_DIR: path.join(ROOT, 'data'),
   PROJECTS_FILE: path.join(ROOT, 'data', 'projects.json'),
   ARTIFACTS_DIR: path.join(ROOT, 'data', 'artifacts'),
+  SCENES_DIR: path.join(ROOT, 'data', 'scenes'),
   PORT: Number(process.env.PORT || 4173),
   HOST: process.env.HOST || '127.0.0.1',
   OPENAI_MODEL: process.env.OPENAI_MODEL || 'gpt-6-astra',
