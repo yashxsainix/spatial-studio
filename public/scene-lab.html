@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Spatial Studio · Walkable World</title>
+  <script type="importmap">
+  {"imports":{"playcanvas":"https://cdn.jsdelivr.net/npm/playcanvas@2.22.1/build/playcanvas.mjs","@playcanvas/web-components":"https://cdn.jsdelivr.net/npm/@playcanvas/web-components@0.23.0/dist/pwc.min.mjs","@dimforge/rapier3d-compat":"https://esm.sh/@dimforge/rapier3d-compat@0.20.0"}}
+  </script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@playcanvas/web-components@0.23.0/dist/pwc.min.mjs"></script>
+  <link rel="stylesheet" href="/scene-lab.css">
+</head>
+<body>
+  <div class="lab-shell">
+    <header class="lab-topbar">
+      <a class="brand" id="backLink" href="/"><span class="brand-mark">S</span><span><strong>Spatial Studio</strong><small id="projectContext">Walkable World · V0.6</small></span></a>
+      <div class="top-center"><span class="status-dot"></span><span id="saveState">Local scene</span></div>
+      <div class="top-actions">
+        <button class="walk-primary" id="walkModeBtn" disabled>Enter walk</button>
+        <button class="ghost" id="resetBtn" disabled>Reset</button>
+        <button class="primary" id="savePoseBtn" disabled>Save start view</button>
+      </div>
+    </header>
+
+    <main class="lab-main">
+      <section class="stage" id="stage">
+        <pc-app id="pcApp" antialias="false" max-pixel-ratio="1" backend="webgl2">
+          <pc-asset src="https://cdn.jsdelivr.net/npm/playcanvas/scripts/esm/camera-controls.mjs"></pc-asset>
+          <pc-scene>
+            <pc-entity id="cameraEntity" name="camera" position="0 0 3">
+              <pc-camera clear-color="0.045 0.041 0.038"></pc-camera>
+              <pc-script><pc-script-instance name="cameraControls"></pc-script-instance></pc-script>
+            </pc-entity>
+          </pc-scene>
+        </pc-app>
+
+        <div class="empty-state" id="emptyState">
+          <div class="orb"></div><div class="eyebrow">Spatial world builder</div>
+          <h1>Build a place<br>you can walk through.</h1>
+          <p>Open a reconstructed scene, calibrate a safe walk path, and add invisible collision guides around walls and objects.</p>
+          <label class="upload-btn">Choose spatial files<input id="fileInput" type="file" multiple accept=".ply,.splat,.sog,.spz,.json"></label>
+        </div>
+
+        <div class="drop-hint">Drop spatial files to load</div>
+        <div class="walk-reticle" id="walkReticle" hidden><span></span></div>
+        <div class="walk-banner" id="walkBanner" hidden><strong>Walk mode</strong><span>Mouse · look &nbsp; WASD · walk &nbsp; Shift · faster &nbsp; Esc · exit</span></div>
+        <div class="hud" id="hud" hidden><span>Drag · orbit</span><span>Right drag · pan</span><span>Wheel · zoom</span><span id="walkHud">Safe path</span></div>
+        <div class="load-progress" id="loadProgress" hidden><span></span><b>Loading spatial scene…</b></div>
+      </section>
+
+      <aside class="inspector">
+        <div class="inspector-head"><div class="eyebrow">Walkable world</div><h2 id="sceneTitle">Spatial shell</h2><p id="sceneSummary">No scene loaded yet.</p></div>
+        <div class="metric-grid">
+          <div class="metric"><small>Status</small><strong id="sceneStatus">Waiting</strong></div>
+          <div class="metric"><small>Capture poses</small><strong id="cameraCount">—</strong></div>
+          <div class="metric"><small>Collision guides</small><strong id="colliderCount">0</strong></div>
+          <div class="metric"><small>Portals</small><strong id="portalCount">0</strong></div>
+        </div>
+
+        <section class="panel walk-panel">
+          <div class="panel-top"><div><div class="panel-title">First-person navigation</div><p>Walk at a fixed human-height plane with a physics capsule and safe captured-space boundary.</p></div><span class="badge accent">V0.6</span></div>
+          <button class="wide walk-cta" id="walkModeSide" disabled>Enter first-person walk</button>
+          <div class="walk-status-row"><span><i id="physicsDot"></i>Physics</span><strong id="physicsStatus">Loading</strong></div>
+          <div class="toggle-row"><div><strong>Safe captured path</strong><small>Keeps walking close to places the camera actually captured.</small></div><label class="switch"><input id="safePathToggle" type="checkbox" checked><span></span></label></div>
+          <div class="range-row"><div><strong>Walk corridor</strong><small id="corridorLabel">Auto</small></div><input id="corridorRange" type="range" min="20" max="300" value="100"></div>
+          <div class="toggle-row"><div><strong>Collision guides</strong><small>Stops the walk capsule at walls you mark.</small></div><label class="switch"><input id="collisionToggle" type="checkbox" checked><span></span></label></div>
+          <div class="toggle-row"><div><strong>Show navigation guides</strong><small>Editor-only path and collision helpers.</small></div><label class="switch"><input id="guidesToggle" type="checkbox" checked><span></span></label></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-top"><div><div class="panel-title">Calibrate scene</div><p>Use the original capture path to get a useful starting point and walking height.</p></div><span class="badge">Setup</span></div>
+          <div class="button-grid"><button id="captureBtn" disabled>Capture start</button><button id="flipBtn" disabled>Flip direction</button></div>
+          <button class="wide secondary" id="savePoseSide" disabled>Save current view + walk height</button>
+        </section>
+
+        <section class="panel">
+          <div class="panel-top"><div><div class="panel-title">Collision editor</div><p>Stand near a wall or shelf, face it, then place a lightweight invisible blocker.</p></div><span class="badge">Physics</span></div>
+          <input id="colliderLabel" maxlength="80" placeholder="Guide label, e.g. Produce shelf">
+          <button class="wide" id="addWallBtn" disabled>Place wall in front of me</button>
+          <div class="collider-list" id="colliderList"><div class="empty-list">No collision guides yet.</div></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-top"><div><div class="panel-title">Memory portals</div><p>Place a real video, 360 moment, page, or story inside the reconstructed world.</p></div><span class="badge accent">Compose</span></div>
+          <div class="portal-form">
+            <input id="portalTitle" maxlength="100" placeholder="Portal title, e.g. First dance">
+            <select id="portalType"><option value="memory">Memory</option><option value="info">Information</option><option value="link">External link</option></select>
+            <input id="portalUrl" maxlength="1200" placeholder="Video / 360 / page URL (optional)">
+            <textarea id="portalDescription" maxlength="500" placeholder="Short description (optional)"></textarea>
+            <button class="wide" id="addPortalBtn" disabled>Place portal in front of me</button>
+          </div>
+          <div class="portal-list" id="portalList"><div class="empty-list">No portals yet.</div></div>
+        </section>
+
+        <section class="panel publish-panel">
+          <div class="panel-top"><div><div class="panel-title">Experience preview</div><p>Review the customer-facing world with the same first-person navigation.</p></div><span class="badge">Preview</span></div>
+          <input id="publishTitle" maxlength="100" placeholder="Experience title">
+          <input id="publishSubtitle" maxlength="220" placeholder="Short welcome line">
+          <button class="wide" id="previewBtn" disabled>Open walkable preview →</button>
+          <small class="privacy-note">Preview runs locally on your Mac. Nothing is publicly hosted yet.</small>
+        </section>
+
+        <section class="panel files-panel"><details><summary>Scene files & diagnostics</summary><div class="file-row"><span>Gaussian splat</span><strong id="plyFile">Not loaded</strong></div><div class="file-row"><span>Capture poses</span><strong id="cameraFile">Optional</strong></div><label class="subtle-upload">Replace / add files<input id="fileInputSide" type="file" multiple accept=".ply,.splat,.sog,.spz,.json"></label></details></section>
+      </aside>
+    </main>
+  </div>
+  <script type="module" src="/scene-lab.js"></script>
+</body>
+</html>
